@@ -4,10 +4,16 @@ from collections import UserDict
 
 class Field:
     def __init__(self, value):
+        self.__value = None
         self.value = value
 
-    def __str__(self):
-        return str(self.value)
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, value):
+        self.__value = value
 
 
 class Name(Field):
@@ -26,11 +32,9 @@ class Name(Field):
 
 
 class Birthday(Field):
-    def validate(self, value):
-        try:
-            datetime.strptime(value, "%Y-%m-%d")
-        except ValueError:
-            raise ValueError('Invalid date format. Use YYYY-MM-DD')
+    @Field.value.setter
+    def value(self, value: str):
+        self.__value = datetime.strptime(value, '%Y.%m.%d').date()
 
     def __str__(self):
         return f"Birthday: {self.value}"
@@ -41,11 +45,11 @@ class Birthday(Field):
 
     def days_to_birthday(self):
         today = datetime.now().date()
-        birthday_date = datetime.strptime(self.value, "%Y-%m-%d").date().replace(year=today.year)
+        birthday_date = self.value.replace(year=today.year)
         if today > birthday_date:
             birthday_date = birthday_date.replace(year=today.year + 1)
         days_left = (birthday_date - today).days
-        return  days_left
+        return days_left
 
 
 class Phone(Field):
@@ -59,6 +63,11 @@ class Phone(Field):
     def __init__(self, value):
         self.validate(value)
         super().__init__(value)
+
+    @Field.value.setter
+    def value(self, value):
+        self.validate(value)
+        self.__value = value
 
 
 class Record:
@@ -144,4 +153,7 @@ class AddressBook(UserDict):
                 yield result
                 counter = 0
                 result = ''
+        if result:
+            yield result
+
 
