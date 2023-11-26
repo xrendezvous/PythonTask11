@@ -155,5 +155,3 @@ class AddressBook(UserDict):
                 result = ''
         if result:
             yield result
-
-
