@@ -39,10 +39,6 @@ class Birthday(Field):
     def __str__(self):
         return f"Birthday: {self.value}"
 
-    def __init__(self, value):
-        self.validate(value)
-        super().__init__(value)
-
     def days_to_birthday(self):
         today = datetime.now().date()
         birthday_date = self.value.replace(year=today.year)
@@ -59,10 +55,6 @@ class Phone(Field):
 
     def __str__(self):
         return f"Phone: {self.value}"
-
-    def __init__(self, value):
-        self.validate(value)
-        super().__init__(value)
 
     @Field.value.setter
     def value(self, value):
